@@ -17,10 +17,10 @@ class Response
 
     /**
      * @param array|object|string $data
-     * @param string $message
+     * @param string|null $message
      * @return JsonResponse
      */
-    public function created($data = [], string $message = '')
+    public function created($data = null, string $message = null)
     {
         return $this->success($data, $message, 201);
     }
@@ -28,11 +28,11 @@ class Response
     /**
      *
      * @param JsonResource|array|mixed|string $data
-     * @param string $message
+     * @param string|null $message
      * @param int $code
      * @return JsonResponse
      */
-    public function success($data = [], string $message = '', int $code = 200)
+    public function success($data = null, string $message = null, int $code = 200)
     {
         if ($data instanceof ResourceCollection) {
             $data = $data->response()->getData(true);
@@ -48,7 +48,7 @@ class Response
 
         if (func_num_args() == 1 && is_string($data)) {
             $message = $data;
-            $data = [];
+            $data = null;
         }
 
         return $this->response($this->formatData($data, $message, 200), $code);
@@ -106,11 +106,15 @@ class Response
         ];
         if (isset($data['data'])) {
             $result = array_merge($result, $data);
-            return array_filter($result);
+            return array_filter($result, function ($item) {
+                return is_null($item) == false;
+            });
         }
         $result['data'] = $data;
 
-        return array_filter($result);
+        return array_filter($result, function ($item) {
+            return is_null($item) == false;
+        });
     }
 
     /**
