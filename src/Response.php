@@ -59,17 +59,18 @@ class Response
      *
      * @param string $message
      * @param int $code
+     * @param null|array $data
      * @return JsonResponse
      *
      * @throws HttpResponseException
      */
-    public function fail(string $message = '', int $code = 500)
+    public function fail(string $message = '', int $code = 500, $data = null)
     {
         if (false !== strpos($message, '|')) {
             list ($code, $message) = explode('|', $message, 2);
         }
 
-        return $this->response($this->formatData(null, $message, $code));
+        return $this->response($this->formatData($data, $message, $code));
     }
 
     public function notFound($message = 'not found')
